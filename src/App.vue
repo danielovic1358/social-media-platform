@@ -1,30 +1,44 @@
- <script setup lang="ts">
+<script setup lang="ts">
 import axios from 'axios'
 import "./assets/main.css";
-import { onBeforeMount, onMounted, ref } from 'vue';
+import { onBeforeMount, ref } from 'vue';
+import { useRouter } from 'vue-router'
+import App from './App.vue'
 import Friends from "./Friends.vue";
 import Messages from "./Message.vue";
+import Search from './Search.vue';
 let keyword = "";
 const routes = {
-    "/friends": Friends,
-    "/messages": Messages,
+  "/": App,
+  "/friends": Friends,
+  "/messages": Messages,
+  "/search/:keyword": Search
 }
 const getPost = ref(<any>{})
+const getAccountInformation = ref(<any>{})
 
 async function loadPost() {
-  const postFromServer = await axios.get("http://localhost:3000/posts")
-  getPost.value = postFromServer.data[0]
-  console.log(getPost.value.imageURL)
+  const postsFromServer = await axios.get("http://localhost:3000")
+  getPost.value = postsFromServer.data.posts[0]
+  getAccountInformation.value = postsFromServer.data.accounts[0]
 }
 
-onBeforeMount(async()=>{
+onBeforeMount(async() => {
   await loadPost()
 })
+
+const router = useRouter()
+
+function search(keyword : string) {
+  router.push('/search/' + keyword.valueOf())
+}
+
 </script>
 
 <template>
+  
   <ul class="topnav">
-    <a href="http://localhost:5173/start">
+    <a href="http://localhost:5173/">
       <img class="icons" src="./assets/home.png" alt="Homebutton">
     </a>
     <a href="http://localhost:5173/friends">
@@ -35,22 +49,29 @@ onBeforeMount(async()=>{
     </a>
     <input v-model="keyword" type="text">
     <img class="icons" src="./assets/searchicon.png" alt="Searchbutton" type="submit"
-      v-on:click="console.log('Suche wird ausgeführt. Es wird nach ' + keyword + ' gesucht.')" style="padding-left: 10px;"> 
+      v-on:click="search(keyword)" style="padding-left: 10px;"> 
   </ul>
 
   <div class="flex-container">
     <div class="friendlist">
       <h1>Freundesliste</h1>
-      <img class="profiles" src="./assets/account1.png">
+      <img class="profiles" :src="getAccountInformation.accountURL" alt="Profile">
+      <h3>{{ getAccountInformation.accountname }}</h3>
     </div>
     <div>
-      <img class="posts" :src="getPost.imageURL" alt="Beitrag">
+      <span class="forpost">
+       <img class="posts" :src="getPost.imageURL" alt="Beitrag">
+       <div class="rectangle">
+        <p>{{ getPost.postcaption }}</p>
+       </div>
+      </span>
+    </div>
+    <div>
       <span class="arrowkeys">
         <button onclick="alert('Letzter Beitrag.')"><img class="arrowkeys" src="./assets/arrowup.png"></button>
         <button onclick="alert('Nächster Beitrag.')"><img class="arrowkeys" src="./assets/arrowdown.png"></button>
       </span>
     </div>
-
   </div>
 </template>
 

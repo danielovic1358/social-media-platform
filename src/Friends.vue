@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import "./assets/main.css";
+import App from "./App.vue"
 import Friends from "./Friends.vue";
 import Messages from "./Message.vue";
+import Search from "./Search.vue";
 let keyword = "";
 const routes = {
-    "/friends": Friends,
-    "/messages": Messages,
+  "/": App,
+  "/friends": Friends,
+  "/messages": Messages,
+  "/search/:keyword": Search
 }
 </script>
 
