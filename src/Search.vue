@@ -1,26 +1,25 @@
 <script setup lang="ts">
-import axios from 'axios'
-import "./assets/main.css";
-import { onBeforeMount, ref } from 'vue';
+import router from './router'
+import Home from './Home.vue'
 import Friends from "./Friends.vue";
-import App from './App.vue'
 import Messages from "./Message.vue";
 import Search from "./Search.vue"
 let keyword = "";
 const routes = {
-  "/": App,
+  "/home": Home,
   "/friends": Friends,
   "/messages": Messages,
   "/search/:keyword": Search
 }
-const getPost = ref(<any>{})
 
-async function loadPost() {
-  const postFromServer = await axios.get("http://localhost:3000/posts")
-  getPost.value = postFromServer.data[0]
+function search(keyword : string) {
+  router.push('/search/' + keyword.valueOf())
 }
 
-onBeforeMount(async() => {
-  await loadPost()
-})
 </script>
+
+<template>
+
+</template>
+
+<style scoped></style>

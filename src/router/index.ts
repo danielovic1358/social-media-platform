@@ -1,12 +1,18 @@
 import App from '@/App.vue'
-import Friends from '@/Friends.vue'
-import Message from '@/Message.vue'
-import Search from '@/Search.vue'
+import Home from '../Home.vue'
+import Friends from '../Friends.vue'
+import Message from '../Message.vue'
+import Search from '../Search.vue'
 import {createRouter, createWebHistory} from 'vue-router'
+
 const routes = [
     {
         path: '/',
-        component: App
+        component: Home
+    },
+    {
+        path: '/home',
+        component: Home
     },
     {
         path: '/friends',

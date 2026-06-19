@@ -1,44 +1,59 @@
 <script setup lang="ts">
+import './assets/main.css'
 import axios from 'axios'
-import "./assets/main.css";
 import { onBeforeMount, ref } from 'vue';
-import { useRouter } from 'vue-router'
-import App from './App.vue'
+import router from './router'
+import Home from './Home.vue'
 import Friends from "./Friends.vue";
 import Messages from "./Message.vue";
 import Search from './Search.vue';
 let keyword = "";
 const routes = {
-  "/": App,
+  "/home": Home,
   "/friends": Friends,
   "/messages": Messages,
   "/search/:keyword": Search
 }
 const getPost = ref(<any>{})
 const getAccountInformation = ref(<any>{})
+const currentPost = ref(0)
 
 async function loadPost() {
   const postsFromServer = await axios.get("http://localhost:3000")
-  getPost.value = postsFromServer.data.posts[0]
-  getAccountInformation.value = postsFromServer.data.accounts[0]
+  getPost.value = postsFromServer.data.posts
+  getAccountInformation.value = postsFromServer.data.accounts
 }
 
 onBeforeMount(async() => {
   await loadPost()
 })
 
-const router = useRouter()
-
 function search(keyword : string) {
   router.push('/search/' + keyword.valueOf())
+}
+
+function nextPost() {
+  if (getPost.value[currentPost.value + 1] !== undefined) {
+    currentPost.value++
+  } else {
+    alert("Dies ist der letzte geladene Post.")
+    currentPost.value = 0
+  }
+}
+
+function previousPost() {
+  if (currentPost.value > 0) {
+    currentPost.value--
+  } else if (currentPost.value == 0) {
+    alert("Dies ist der erste Post.")
+  }
 }
 
 </script>
 
 <template>
-  
   <ul class="topnav">
-    <a href="http://localhost:5173/">
+    <a href="http://localhost:5173/home">
       <img class="icons" src="./assets/home.png" alt="Homebutton">
     </a>
     <a href="http://localhost:5173/friends">
@@ -48,31 +63,9 @@ function search(keyword : string) {
       <img class="icons" src="./assets/messages.png" alt="Messages">
     </a>
     <input v-model="keyword" type="text">
-    <img class="icons" src="./assets/searchicon.png" alt="Searchbutton" type="submit"
-      v-on:click="search(keyword)" style="padding-left: 10px;"> 
+    <img class="icons" src="./assets/searchicon.png" alt="Searchbutton" type="submit" v-on:click="search(keyword)" style="padding-left: 10px;">
   </ul>
-
-  <div class="flex-container">
-    <div class="friendlist">
-      <h1>Freundesliste</h1>
-      <img class="profiles" :src="getAccountInformation.accountURL" alt="Profile">
-      <h3>{{ getAccountInformation.accountname }}</h3>
-    </div>
-    <div>
-      <span class="forpost">
-       <img class="posts" :src="getPost.imageURL" alt="Beitrag">
-       <div class="rectangle">
-        <p>{{ getPost.postcaption }}</p>
-       </div>
-      </span>
-    </div>
-    <div>
-      <span class="arrowkeys">
-        <button onclick="alert('Letzter Beitrag.')"><img class="arrowkeys" src="./assets/arrowup.png"></button>
-        <button onclick="alert('Nächster Beitrag.')"><img class="arrowkeys" src="./assets/arrowdown.png"></button>
-      </span>
-    </div>
-  </div>
+<RouterView />
 </template>
 
 <style scoped></style>
