@@ -112,7 +112,7 @@ span.arrowkeys {
   height: 100px;
 }
 
-input {
+input.app {
   margin-left: auto;
   border-radius: 30px;
   padding: 10px;
