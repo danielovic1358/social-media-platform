@@ -12,9 +12,8 @@ function openChat(user : null) {
 }
 
 async function loadPost() {
-  const postsFromServer = await axios.get("http://localhost:3000")
-  getPost.value = postsFromServer.data.posts
-  getAccountInformation.value = postsFromServer.data.accounts
+  const accountsFromServer = await axios.get("http://localhost:3000/account")
+  getAccountInformation.value = accountsFromServer.data
 }
 
 onBeforeMount(async() => {
@@ -28,24 +27,24 @@ onBeforeMount(async() => {
     <div class="friendlist">
       <h1>Freundesliste</h1>
 
-      <a @click="openChat(getAccountInformation[0].accountname)">
+      <a @click="openChat(getAccountInformation[16].accountname)">
         <div>
-          <img class="profiles" :src="getAccountInformation[0].profileURL" alt="Profile">
-          <h3>{{ getAccountInformation[0].accountname }}</h3>
+          <img class="profiles" :src="getAccountInformation[16].profileURL" alt="Profile">
+          <h3>{{ getAccountInformation[16].accountname }}</h3>
         </div>
       </a>
 
-      <a @click="openChat(getAccountInformation[1].accountname)">
+      <a @click="openChat(getAccountInformation[16].accountname)">
         <div>
-          <img class="profiles" :src="getAccountInformation[1].profileURL" alt="Profile">
-          <h3>{{ getAccountInformation[1].accountname }}</h3>
+          <img class="profiles" :src="getAccountInformation[16].profileURL" alt="Profile">
+          <h3>{{ getAccountInformation[16].accountname }}</h3>
         </div>
       </a>
 
-      <a @click="openChat(getAccountInformation[2].accountname)">
+      <a @click="openChat(getAccountInformation[16].accountname)">
         <div>
-          <img class="profiles" :src="getAccountInformation[2].profileURL" alt="Profile">
-          <h3>{{ getAccountInformation[2].accountname }}</h3>
+          <img class="profiles" :src="getAccountInformation[16].profileURL" alt="Profile">
+          <h3>{{ getAccountInformation[16].accountname }}</h3>
         </div>
       </a>
 

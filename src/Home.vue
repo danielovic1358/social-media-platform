@@ -19,9 +19,10 @@ const getAccountInformation = ref(<any>{})
 const currentPost = ref(0)
 
 async function loadPost() {
-  const postsFromServer = await axios.get("http://localhost:3000")
-  getPost.value = postsFromServer.data.posts
-  getAccountInformation.value = postsFromServer.data.accounts
+  const postsFromServer = await axios.get("http://localhost:3000/post")
+  const accountsFromServer = await axios.get("http://localhost:3000/account")
+  getPost.value = postsFromServer.data
+  getAccountInformation.value = accountsFromServer.data
 }
 
 onBeforeMount(async() => {
@@ -52,11 +53,11 @@ function previousPost() {
 </script>
 
 <template>
-  <div class="flex-container" v-if="getAccountInformation[0].profileURL && getAccountInformation[0].accountname">
+  <div class="flex-container" v-if="getAccountInformation && getPost">
       <div class="friendlist">
           <h1>Freundesliste</h1>
-          <img class="profiles" :src="getAccountInformation[0].profileURL" alt="Profile">
-          <h3>{{ getAccountInformation[0].accountname }}</h3>
+          <img class="profiles" :src="getAccountInformation[16].profileURL" alt="Profile">
+          <h3>{{ getAccountInformation[16].accountname }}</h3>
           <img class="profiles" :src="getAccountInformation[1].profileURL" alt="Profile">
           <h3>{{ getAccountInformation[1].accountname }}</h3>
           <img class="profiles" :src="getAccountInformation[2].profileURL" alt="Profile">
@@ -68,7 +69,7 @@ function previousPost() {
 
       <div v-if="getPost">
           <span class="forpost">
-              <img class="posts" :src="getPost[currentPost.valueOf()].imageURL" alt="Beitrag">
+              <img class="posts" :src="getPost[currentPost.valueOf()].postURL" alt="Beitrag">
               <div class="rectangle">
                   <p>{{ getPost[currentPost.valueOf()].postcaption }}</p>
               </div>
