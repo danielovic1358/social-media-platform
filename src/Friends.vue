@@ -3,22 +3,47 @@ import './assets/friends.css'
 import { onBeforeMount, ref } from 'vue'
 import axios from 'axios'
 
-const selectedUser = ref(null)
-const getPost = ref(<any>{})
-const getAccountInformation = ref(<any>{})
-
-function openChat(user : null) {
-  selectedUser.value = user
+type msg = {
+    recieverid: number;
+    senderid: number;
+    message: string;
 }
 
-async function loadPost() {
+const selectedUser = ref()
+const getAccountInformation = ref(<any>{})
+const loadedChats = ref(<any>{})
+const messages = ref(<msg[]>[])
+const input = ref(<string>{})
+
+function openChat(user : number) {
+  selectedUser.value = user
+  getChatMsg(user)
+}
+
+async function loadAccountandChat() {
   const accountsFromServer = await axios.get("http://localhost:3000/account")
+  const chatsFromServer = await axios.get("http://localhost:3000/chat")
+  loadedChats.value = chatsFromServer.data
   getAccountInformation.value = accountsFromServer.data
 }
 
+function getChatMsg(id: number) {
+  messages.value = loadedChats.value.filter((msg: msg ) => msg.senderid == id);
+}
+
 onBeforeMount(async() => {
-  await loadPost()
+  await loadAccountandChat()
 })
+
+function sendMessage(input : string) {
+  const field = document.getElementById('chat')
+  const chatDiv = document.createElement('div')
+  chatDiv.classList.add('rectangle-message')
+  const message = document.createElement('p')
+  message.textContent = input
+  chatDiv.appendChild(message)
+  field?.appendChild(chatDiv)
+}
 
 </script>
 
@@ -27,38 +52,35 @@ onBeforeMount(async() => {
     <div class="friendlist">
       <h1>Freundesliste</h1>
 
-      <a @click="openChat(getAccountInformation[16].accountname)">
+      <a @click="openChat(getAccountInformation[0].accountid)">
         <div>
-          <img class="profiles" :src="getAccountInformation[16].profileURL" alt="Profile">
-          <h3>{{ getAccountInformation[16].accountname }}</h3>
+          <img class="profiles" :src="getAccountInformation[0].profileURL" alt="Profile">
+          <h3>{{ getAccountInformation[0].accountname }}</h3>
         </div>
       </a>
 
-      <a @click="openChat(getAccountInformation[16].accountname)">
+      <a @click="openChat(getAccountInformation[1].accountid)">
         <div>
-          <img class="profiles" :src="getAccountInformation[16].profileURL" alt="Profile">
-          <h3>{{ getAccountInformation[16].accountname }}</h3>
+          <img class="profiles" :src="getAccountInformation[1].profileURL" alt="Profile">
+          <h3>{{ getAccountInformation[1].accountname }}</h3>
         </div>
       </a>
 
-      <a @click="openChat(getAccountInformation[16].accountname)">
+      <a @click="openChat(getAccountInformation[3].accountid)">
         <div>
-          <img class="profiles" :src="getAccountInformation[16].profileURL" alt="Profile">
-          <h3>{{ getAccountInformation[16].accountname }}</h3>
+          <img class="profiles" :src="getAccountInformation[3].profileURL" alt="Profile">
+          <h3>{{ getAccountInformation[3].accountname }}</h3>
         </div>
       </a>
 
     </div>
-    <div class="chatbox" v-if="selectedUser">
+    <div id="chat" class="chatbox" v-if="selectedUser">
       <h2>Chat - {{ selectedUser }}</h2>
-      <div class="rectangle-friendmessage">
-        <p>Also, ich komme in zwei Wochen aus dem Urlaub, nur damit du Bescheid weißt.</p>
+      <div v-for="message in messages" class="rectangle-friendmessage">
+          <p>{{message.message}}</p>
       </div>
-      <div class="rectangle-message">
-        <p>Ja, weil ich würde dann, wenn du wiederkommst, in den Urlaub gehen, damit wir nicht unterbesetzt sind.</p>
-      </div>
-      <input class="chat">
-      <img class="icon" src="./assets/messages.png" alt="Submit" type="submit" v-on:click="console.log('Nachricht abgesendet.')" style="padding-left: 10px;">
+      <input class="chat" v-model="input" type="text">
+      <img class="icon" src="./assets/messages.png" alt="Submit" type="submit" v-on:click="sendMessage(input)" style="padding-left: 10px;">
     </div>
   </div>  
 </template>

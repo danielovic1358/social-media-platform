@@ -19,10 +19,10 @@ const getAccountInformation = ref(<any>{})
 const currentPost = ref(0)
 
 async function loadPost() {
-  const postsFromServer = await axios.get("http://localhost:3000/post")
-  const accountsFromServer = await axios.get("http://localhost:3000/account")
-  getPost.value = postsFromServer.data
-  getAccountInformation.value = accountsFromServer.data
+    const postsFromServer = await axios.get("http://localhost:3000/post")
+    const accountsFromServer = await axios.get("http://localhost:3000/account")
+    getPost.value = postsFromServer.data
+    getAccountInformation.value = accountsFromServer.data
 }
 
 onBeforeMount(async() => {
@@ -37,7 +37,7 @@ function nextPost() {
   if (getPost.value[currentPost.value + 1] !== undefined) {
     currentPost.value++
   } else {
-    alert("Dies ist der letzte geladene Post.")
+    alert("Dies ist der letzte geladene Post. Zurück zum Anfang.")
     currentPost.value = 0
   }
 }
@@ -56,8 +56,8 @@ function previousPost() {
   <div class="flex-container" v-if="getAccountInformation && getPost">
       <div class="friendlist">
           <h1>Freundesliste</h1>
-          <img class="profiles" :src="getAccountInformation[16].profileURL" alt="Profile">
-          <h3>{{ getAccountInformation[16].accountname }}</h3>
+          <img class="profiles" :src="getAccountInformation[0].profileURL" alt="Profile">
+          <h3>{{ getAccountInformation[0].accountname }}</h3>
           <img class="profiles" :src="getAccountInformation[1].profileURL" alt="Profile">
           <h3>{{ getAccountInformation[1].accountname }}</h3>
           <img class="profiles" :src="getAccountInformation[2].profileURL" alt="Profile">
